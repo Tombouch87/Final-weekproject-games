@@ -125,5 +125,5 @@ const seed = async (data) => {
 		return result.rows;
 	});
 };
-
+console.log('seed')
 module.exports = seed;
