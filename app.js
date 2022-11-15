@@ -1,6 +1,7 @@
 const express = require('express')
 const { getCategories } = require('./controllers/categories.js')
 const { getReviews, getReviewById } = require('./controllers/reviews.js')
+const { getReviewComments } = require('./controllers/comments.js')
 
 const app = express()
 
@@ -12,6 +13,9 @@ app.get('/api/reviews', getReviews)
 
 //5 GET api/review/:review_id
 app.get('/api/reviews/:review_id', getReviewById)
+
+//6 GET api/review/:review_id/comments
+app.get('/api/reviews/:review_id/comments', getReviewComments)
 
 
 app.all('/*', (req, res) => {
