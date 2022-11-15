@@ -78,3 +78,45 @@ describe('GET /api/reviews', () => {
         })
     })
 })
+
+
+//5 GET api/reviews/:review_id
+describe('GET /api/reviews/:review_id', () => {
+    test('status:200, responds with review object', () => {
+        return request(app)
+            .get('/api/reviews/2')
+            .expect(200)
+            .then(({ body }) => {
+                const { review } = body
+                    expect(review).toEqual(
+                        expect.objectContaining({
+                            review_id: 2,
+                            title: expect.any(String),
+                            review_body: expect.any(String),
+                            designer: expect.any(String),
+                            review_img_url: expect.any(String),
+                            votes: expect.any(Number),
+                            category: expect.any(String),
+                            owner: expect.any(String),
+                            created_at: expect.any(String)
+                        })
+                    )
+        })
+    })
+    test('status 404: valid but non-existent review_id', () => {
+        return request(app)
+            .get('/api/reviews/1000')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('review not found')
+            })
+    })
+    test('status 400: non_valid review_id', () => {
+        return request(app)
+            .get('/api/reviews/nonvalid')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('bad request, review_id must be a number')
+            })
+    })
+})

@@ -9,3 +9,13 @@ exports.getReviews = (req, res, next) => {
         next(err)
     })
 }
+
+//5 GET api/reviews/:review_id
+exports.getReviewById = (req, res, next) => {
+    selectReviewById(req.params.review_id).then((review) => {
+        res.status(200).send({review})
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
