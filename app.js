@@ -1,12 +1,14 @@
 const express = require('express')
-const {
-    getCategories
-} = require('./controllers/categories.js')
+const { getCategories } = require('./controllers/categories.js')
+const { getReviews } = require('./controllers/reviews.js')
 
 const app = express()
 
-//GET api/categories
+//3 GET api/categories
 app.get('/api/categories', getCategories)
+
+//4 GET api/reviews
+app.get('/api/reviews', getReviews)
 
 
 app.all('/*', (req, res) => {
