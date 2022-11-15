@@ -88,19 +88,17 @@ describe('GET /api/reviews/:review_id', () => {
             .expect(200)
             .then(({ body }) => {
                 const { review } = body
-                    expect(review).toEqual(
-                        expect.objectContaining({
-                            review_id: 2,
-                            title: expect.any(String),
-                            review_body: expect.any(String),
-                            designer: expect.any(String),
-                            review_img_url: expect.any(String),
-                            votes: expect.any(Number),
-                            category: expect.any(String),
-                            owner: expect.any(String),
-                            created_at: expect.any(String)
-                        })
-                    )
+                    expect(review).toEqual({
+                        review_id: 2,
+                        title: expect.any(String),
+                        review_body: expect.any(String),
+                        designer: expect.any(String),
+                        review_img_url: expect.any(String),
+                        votes: expect.any(Number),
+                        category: expect.any(String),
+                        owner: expect.any(String),
+                        created_at: expect.any(String)
+                    })
         })
     })
     test('status 404: valid but non-existent review_id', () => {
@@ -114,6 +112,62 @@ describe('GET /api/reviews/:review_id', () => {
     test('status 400: non_valid review_id', () => {
         return request(app)
             .get('/api/reviews/nonvalid')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('bad request, review_id must be a number')
+            })
+    })
+})
+
+//6 GET api/reviews/:review_id/comments
+describe.only('GET /api/reviews/:review_id/comments', () => {
+    test('status:200, responds with aray of review comments', () => {
+        return request(app)
+            .get('/api/reviews/2/comments')
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body
+                comments.forEach((comment) => {
+                    expect(comment).toEqual(
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            review_id: 2,
+                        })
+                    )
+                })
+        })
+    })
+    test('status 200: ordered by created_at', () => {
+        return request(app)
+        .get('/api/reviews/2/comments')
+        .expect(200)
+        .then(({body}) =>  {
+            expect(body.comments).toBeSortedBy('created_at', {descending: true})
+        })
+    })
+    test('status 200: empty array when review has no comments', () => {
+        return request(app)
+            .get('/api/reviews/1/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments).toEqual([])
+            })
+    })
+    test('status 404: valid but non-existent review_id', () => {
+        return request(app)
+            .get('/api/reviews/1000/comments')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('review not found')
+            })
+    })
+    test('status 400: non_valid review_id', () => {
+        return request(app)
+            .get('/api/reviews/nonvalid/comments')
             .expect(400)
             .then(({body}) => {
                 expect(body.msg).toBe('bad request, review_id must be a number')
