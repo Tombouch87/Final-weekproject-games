@@ -23,3 +23,21 @@ exports.selectReviewComments = (id) => {
             return comments.rows
     })
 }
+
+//7 POST api/reviews/:review_id/comments
+exports.addComment = (comment, review_id) =>   {
+    return checkReviewExists(review_id)
+        .then(() => {
+            return db.query(
+                `
+                INSERT INTO comments 
+                (review_id, author, body)
+                VALUES ($1, $2, $3)
+                RETURNING *;
+                `, [review_id, comment.author, comment.body]
+            )
+                })
+            .then((response) => {
+                 return response.rows[0]
+            })
+}
