@@ -21,6 +21,8 @@ app.get('/api/reviews/:review_id/comments', getReviewComments)
 //7 POST api/review/:review_id/comments
 app.post('/api/reviews/:review_id/comments', postComment)
 
+//8
+
 app.all('/*', (req, res) => {
     res.status(404).send({msg: 'Route not found'})
 })

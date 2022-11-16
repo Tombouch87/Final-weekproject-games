@@ -41,3 +41,5 @@ exports.addComment = (comment, review_id) =>   {
                  return response.rows[0]
             })
 }
+
+//8
