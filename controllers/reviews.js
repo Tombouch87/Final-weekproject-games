@@ -1,8 +1,11 @@
 const { selectReviews, selectReviewById, updateReview } = require('../models/reviews.js')
 
-//4 GET api/reviews
+//4 & 11 GET api/reviews
 exports.getReviews = (req, res, next) => {
-    selectReviews().then((reviews) => {
+    const {sort_by, order, category}= req.query
+    //const category = req.query.category
+    selectReviews(sort_by, order, category)
+    .then((reviews) => {
         res.status(200).send({reviews})
     })
     .catch((err) => {
