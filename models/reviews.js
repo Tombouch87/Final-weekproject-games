@@ -1,24 +1,39 @@
 const db = require('../db/connection.js')
 
-//4 GET api/reviews
-exports.selectReviews = () => {
-    return db.query(
-        `
-        SELECT reviews.owner,
-        reviews.title,
-        reviews.review_id,
-        reviews.category,
-        reviews.review_img_url,
-        reviews.created_at,
-        reviews.votes,
-        reviews.designer,
-        COUNT(comments.comment_id) AS comment_count FROM reviews
-        LEFT JOIN comments
-        ON reviews.review_id = comments.review_id
-        GROUP BY reviews.review_id
-        ORDER BY created_at DESC
-        `
-    ).then((reviews) => {
+//4 & 11 GET api/reviews
+exports.selectReviews = (sort_by = 'created_at', order = 'DESC', category) => {
+    const validOrder = ['ASC', 'DESC']
+    const validColumnsSort = ['owner','title','review_id','category','created_at','votes','designer','comment_count']
+    
+    if (!validColumnsSort.includes(sort_by) || !validOrder.includes(order)) {
+        return Promise.reject({status: 400, msg: 'invalid sort query'})
+    }
+    let queryStr = `
+    SELECT reviews.owner,
+    reviews.title,
+    reviews.review_id,
+    reviews.category,
+    reviews.review_img_url,
+    reviews.created_at,
+    reviews.votes,
+    reviews.designer,
+    COUNT(comments.comment_id) AS comment_count FROM reviews
+    LEFT JOIN comments
+    ON reviews.review_id = comments.review_id
+    `
+    const queryValues = []
+
+    if (category) {
+        queryStr += ` WHERE reviews.category = $1`
+        queryValues.push(category)
+    }
+    queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
+    
+    return db.query(queryStr, queryValues)
+    .then((reviews) => {
+        if (reviews.rows.length === 0) {
+            return Promise.reject({status: 404, msg: 'category not found'})
+        }
         return reviews.rows
     })
 }

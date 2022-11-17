@@ -366,16 +366,113 @@ describe('GET /api/reviews/:review_id', () => {
                 const { review } = body
                     expect(review).toMatchObject({
                         review_id: 2,
-                        title: expect.any(String),
-                        review_body: expect.any(String),
-                        designer: expect.any(String),
-                        review_img_url: expect.any(String),
-                        votes: expect.any(Number),
-                        category: expect.any(String),
-                        owner: expect.any(String),
+                        title: 'Jenga',
+                        review_body: 'Fiddly fun for all the family',
+                        designer: 'Leslie Scott',
+                        review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                        votes: 5,
+                        category: 'dexterity',
+                        owner: 'philippaclaire9',
                         created_at: expect.any(String),
                         comment_count: expect.any(String)
                     })
         })
+    })
+})
+
+//11 GET api/reviews/<query>
+describe('GET /api/reviews/?category=<category>', () => {
+    test('status:200, responds with reviews by category', () => {
+        return request(app)
+            .get('/api/reviews?category=dexterity')
+            .expect(200)
+            .then(({body}) => {
+                const { reviews } = body
+                reviews.forEach((review) => {
+                    expect(review).toEqual({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        designer: expect.any(String),
+                        comment_count: expect.any(String)
+                    })
+                })
+            })
+    })
+    test('status:200, responds with reviews by category', () => {
+        return request(app)
+            .get('/api/reviews?category=dexterity')
+            .expect(200)
+            .then(({body}) => {
+                const { reviews } = body
+                reviews.forEach((review) => {
+                    expect(review.category).toBe('dexterity')
+                })
+            })
+    })
+    test('status:404, responds with error', () => {
+        return request(app)
+            .get('/api/reviews?category=notACategory')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('category not found')
+            })
+    })
+    test('status:200, responds with reviews in correct format', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=owner')
+            .expect(200)
+            .then(({body}) => {
+                const { reviews } = body
+                reviews.forEach((review) => {
+                    expect(review).toEqual({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        designer: expect.any(String),
+                        comment_count: expect.any(String)
+                    })
+                })
+            })
+    })
+    test('status:200, responds with reviews sorted', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=owner')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews).toBeSortedBy('owner', {descending: true})
+            })
+    })
+    test('status:400, responds error for invalid sort', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=bad')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('invalid sort query')
+            })
+    })
+    test('status:200, responds with reviews sorted', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=votes&&order=ASC')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.reviews).toBeSortedBy('votes', {descending: false})
+            })
+    })
+    test('status:400, responds with error for invalid sort', () => {
+        return request(app)
+            .get('/api/reviews?sort_by=votes&&order=BAD')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('invalid sort query')
+            })
     })
 })
