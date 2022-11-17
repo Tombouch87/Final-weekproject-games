@@ -11,7 +11,7 @@ afterAll(() => {
 })
 
 //3 GET api/nonsense
-describe('GET /api/noosense', () => {
+describe('3 GET /api/noosense', () => {
     test('status:404, responds with an array of category objects', () => {
         return request(app)
             .get('/api/nonsense')
@@ -23,7 +23,7 @@ describe('GET /api/noosense', () => {
 })
 
 //3 GET api/categories
-describe('GET /api/categories', () => {
+describe('3 GET /api/categories', () => {
     test('status:200, responds with an array of category objects', () => {
         return request(app)
             .get('/api/categories')
@@ -44,7 +44,7 @@ describe('GET /api/categories', () => {
 })
 
 //4 GET api/reviews
-describe('GET /api/reviews', () => {
+describe('4 GET /api/reviews', () => {
     test('status:200, responds with an array of review objects', () => {
         return request(app)
             .get('/api/reviews')
@@ -81,7 +81,7 @@ describe('GET /api/reviews', () => {
 
 
 //5 GET api/reviews/:review_id
-describe('GET /api/reviews/:review_id', () => {
+describe('5 GET /api/reviews/:review_id', () => {
     test('status:200, responds with review object', () => {
         return request(app)
             .get('/api/reviews/2')
@@ -114,13 +114,13 @@ describe('GET /api/reviews/:review_id', () => {
             .get('/api/reviews/nonvalid')
             .expect(400)
             .then(({body}) => {
-                expect(body.msg).toBe('bad request, review_id must be a number')
+                expect(body.msg).toBe('bad request, must be a number')
             })
     })
 })
 
 //6 GET api/reviews/:review_id/comments
-describe('GET /api/reviews/:review_id/comments', () => {
+describe('6 GET /api/reviews/:review_id/comments', () => {
     test('status:200, responds with aray of review comments', () => {
         return request(app)
             .get('/api/reviews/2/comments')
@@ -170,13 +170,13 @@ describe('GET /api/reviews/:review_id/comments', () => {
             .get('/api/reviews/nonvalid/comments')
             .expect(400)
             .then(({body}) => {
-                expect(body.msg).toBe('bad request, review_id must be a number')
+                expect(body.msg).toBe('bad request, must be a number')
             })
     })
 })
 
 //7 POST api/reviews/:review_id/comments
-describe('POST /api/reviews/:review_id/comments', () => {
+describe('7 POST /api/reviews/:review_id/comments', () => {
     test('status:201, added comment', () => {
         const newComment = {
             author: 'mallionaire',
@@ -220,7 +220,7 @@ describe('POST /api/reviews/:review_id/comments', () => {
             .send(newComment)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe('bad request, review_id must be a number')
+                expect(body.msg).toBe('bad request, must be a number')
         })
     })
     test('status:400, author not a valid user', () => {
@@ -250,4 +250,88 @@ describe('POST /api/reviews/:review_id/comments', () => {
     })
 })
 
-//8
+//8 PATCH api/reviews/:review_id
+describe('8 PATCH /api/reviews/:review_id', () => {
+    test('status:200, increase votes but inc_votes', () => {
+        const reviewPatch = {
+            inc_votes: 1
+        }
+        return request(app)
+            .patch('/api/reviews/1')
+            .send(reviewPatch)
+            .expect(200)
+            .then(({ body }) => {
+                const { review } = body
+                expect(review).toEqual({
+                    review_id: 1,
+                    title: expect.any(String),
+                    review_body: expect.any(String),
+                    designer: expect.any(String),
+                    review_img_url: expect.any(String),
+                    votes: 2,
+                    category: expect.any(String),
+                    owner: expect.any(String),
+                    created_at: expect.any(String)
+                })
+        })
+    })
+    test('status:200, decreases votes but inc_votes', () => {
+        const reviewPatch = {
+            inc_votes: -1
+        }
+        return request(app)
+            .patch('/api/reviews/1')
+            .send(reviewPatch)
+            .expect(200)
+            .then(({ body }) => {
+                const { review } = body
+                expect(review).toEqual({
+                    review_id: 1,
+                    title: expect.any(String),
+                    review_body: expect.any(String),
+                    designer: expect.any(String),
+                    review_img_url: expect.any(String),
+                    votes: 0,
+                    category: expect.any(String),
+                    owner: expect.any(String),
+                    created_at: expect.any(String)
+                })
+        })
+    })
+    test("status 404: returns error if review_id is valid but non-existent", () => {
+        return request(app)
+          .patch("/api/reviews/1000")
+          .send({ inc_votes: 3 })
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("review not found")
+        })
+    })
+    test("status 400: returns error message if review_id is not a number", () => {
+        return request(app)
+        .patch("/api/reviews/nonvalid")
+        .send({ inc_votes: 3 })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('bad request, must be a number')
+        })
+    })
+    test("status 400: returns error if not in correct format", () => {
+        return request(app)
+        .patch("/api/reviews/1")
+        .send({ inc_votes: 3, other: "thing" })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('update formatted incorrectly')
+        })
+    })
+      test("status 400: returns error if inc_votes is not a number", () => {
+        return request(app)
+        .patch("/api/reviews/1")
+        .send({ inc_votes: "hello" })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('bad request, must be a number')
+        })
+      })
+})
