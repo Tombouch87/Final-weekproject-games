@@ -46,3 +46,20 @@ exports.selectReviewById = (id) => {
         return review.rows[0]
     })
 }
+
+//8 PATCHHH api/reviews/review_id
+exports.updateReview = (id, inc) => {
+    return db.query(
+        `
+        UPDATE reviews
+        SET votes = votes + $2
+        WHERE review_id=$1
+        RETURNING *;
+        `, [id, inc]
+    ).then((review) => {
+        if (!review.rows[0]){
+            return Promise.reject({status: 404, msg: 'review not found'}) 
+        }
+        return review.rows[0]
+    })
+}

@@ -1,6 +1,6 @@
 const express = require('express')
 const { getCategories } = require('./controllers/categories.js')
-const { getReviews, getReviewById } = require('./controllers/reviews.js')
+const { getReviews, getReviewById, patchReview } = require('./controllers/reviews.js')
 const { getReviewComments, postComment } = require('./controllers/comments.js')
 
 const app = express()
@@ -21,7 +21,8 @@ app.get('/api/reviews/:review_id/comments', getReviewComments)
 //7 POST api/review/:review_id/comments
 app.post('/api/reviews/:review_id/comments', postComment)
 
-//8
+//8 PATCH api/review/review_id
+app.patch('/api/reviews/:review_id', patchReview)
 
 app.all('/*', (req, res) => {
     res.status(404).send({msg: 'Route not found'})
@@ -38,7 +39,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
     if (err.code === "22P02") {
-        res.status(400).send({msg: 'bad request, review_id must be a number'})
+        res.status(400).send({msg: 'bad request, must be a number'})
     }
     else {
         next(err)
