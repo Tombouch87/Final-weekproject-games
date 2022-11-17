@@ -88,7 +88,7 @@ describe('5 GET /api/reviews/:review_id', () => {
             .expect(200)
             .then(({ body }) => {
                 const { review } = body
-                    expect(review).toEqual({
+                    expect(review).toMatchObject({
                         review_id: 2,
                         title: expect.any(String),
                         review_body: expect.any(String),
@@ -352,6 +352,30 @@ describe('GET /api/users', () => {
                     })
                 })
 
+        })
+    })
+})
+
+//10 GET api/reviews/:review_id
+describe('GET /api/reviews/:review_id', () => {
+    test('status:200, responds with review object', () => {
+        return request(app)
+            .get('/api/reviews/2')
+            .expect(200)
+            .then(({ body }) => {
+                const { review } = body
+                    expect(review).toMatchObject({
+                        review_id: 2,
+                        title: expect.any(String),
+                        review_body: expect.any(String),
+                        designer: expect.any(String),
+                        review_img_url: expect.any(String),
+                        votes: expect.any(Number),
+                        category: expect.any(String),
+                        owner: expect.any(String),
+                        created_at: expect.any(String),
+                        comment_count: expect.any(String)
+                    })
         })
     })
 })
