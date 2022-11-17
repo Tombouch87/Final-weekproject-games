@@ -47,7 +47,7 @@ exports.selectReviewById = (id) => {
     })
 }
 
-//8 PATCHHH api/reviews/review_id
+//8 PATCH api/reviews/review_id
 exports.updateReview = (id, inc) => {
     return db.query(
         `

@@ -252,7 +252,7 @@ describe('7 POST /api/reviews/:review_id/comments', () => {
 
 //8 PATCH api/reviews/:review_id
 describe('8 PATCH /api/reviews/:review_id', () => {
-    test('status:200, increase votes but inc_votes', () => {
+    test('status:200, increase votes by inc_votes', () => {
         const reviewPatch = {
             inc_votes: 1
         }
@@ -334,4 +334,24 @@ describe('8 PATCH /api/reviews/:review_id', () => {
             expect(body.msg).toBe('bad request, must be a number')
         })
       })
+})
+
+//9 GET api/users
+describe('GET /api/users', () => {
+    test('status:200, responds with an array of user objects', () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body
+                users.forEach((user) => {
+                    expect(user).toEqual({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    })
+                })
+
+        })
+    })
 })
