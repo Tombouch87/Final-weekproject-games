@@ -120,7 +120,7 @@ describe('GET /api/reviews/:review_id', () => {
 })
 
 //6 GET api/reviews/:review_id/comments
-describe.only('GET /api/reviews/:review_id/comments', () => {
+describe('GET /api/reviews/:review_id/comments', () => {
     test('status:200, responds with aray of review comments', () => {
         return request(app)
             .get('/api/reviews/2/comments')
@@ -174,3 +174,80 @@ describe.only('GET /api/reviews/:review_id/comments', () => {
             })
     })
 })
+
+//7 POST api/reviews/:review_id/comments
+describe('POST /api/reviews/:review_id/comments', () => {
+    test('status:201, added comment', () => {
+        const newComment = {
+            author: 'mallionaire',
+            body: 'not sure what this is'
+        }
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body
+                expect(comment).toEqual({
+                        comment_id: expect.any(Number),
+                        review_id: 1,
+                        created_at: expect.any(String),
+                        votes: 0,
+                        ...newComment    
+            })
+        })
+    })
+    test('status:404, review_id is valid but non existent', () => {
+        const newComment = {
+            author: 'mallionaire',
+            body: 'not sure what this is'
+        }
+        return request(app)
+            .post('/api/reviews/1000/comments')
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toEqual('review not found')
+        })
+    })
+    test('status:400, review_id is not valid', () => {
+        const newComment = {
+            author: 'mallionaire',
+            body: 'not sure what this is'
+        }
+        return request(app)
+            .post('/api/reviews/notid/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('bad request, review_id must be a number')
+        })
+    })
+    test('status:400, author not a valid user', () => {
+        const newComment = {
+            author: 'me',
+            body: 'not sure what this is'
+        }
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('bad request, author does not exist')
+        })
+    })
+    test('status:400, request body not formatted correctly', () => {
+        const newComment = {
+            body: 'not sure what this is'
+        }
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('bad request, incorrectly formatted comment')
+        })
+    })
+})
+
+//8

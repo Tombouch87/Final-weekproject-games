@@ -1,4 +1,4 @@
-const { selectReviewComments } = require('../models/comments.js')
+const { selectReviewComments, addComment } = require('../models/comments.js')
 
 //6 GET api/reviews/:review_id/comments
 exports.getReviewComments = (req, res, next) => {
@@ -9,3 +9,16 @@ exports.getReviewComments = (req, res, next) => {
         next(err)
     })
 }
+
+//7 POST api/reviews/:review_id/comments
+exports.postComment = (req, res, next) => {
+    addComment(req.body, req.params.review_id)
+        .then((comment) => {
+            res.status(201).send({comment})
+        })
+        .catch((err) => {
+            next(err)
+        })
+}
+
+//8
