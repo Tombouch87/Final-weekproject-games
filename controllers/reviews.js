@@ -10,7 +10,7 @@ exports.getReviews = (req, res, next) => {
     })
 }
 
-//5 GET api/reviews/:review_id
+//5 & 10 GET api/reviews/:review_id
 exports.getReviewById = (req, res, next) => {
     selectReviewById(req.params.review_id).then((review) => {
         res.status(200).send({review})
