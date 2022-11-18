@@ -1,4 +1,5 @@
 const db = require('../db/connection.js')
+const { checkCategoryExists } = require('../utils.js')
 
 //4 & 11 GET api/reviews
 exports.selectReviews = (sort_by = 'created_at', order = 'DESC', category) => {
@@ -28,13 +29,13 @@ exports.selectReviews = (sort_by = 'created_at', order = 'DESC', category) => {
         queryValues.push(category)
     }
     queryStr += `GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
-    
-    return db.query(queryStr, queryValues)
+
+    return checkCategoryExists(category)
+    .then(() => {
+        return db.query(queryStr, queryValues)
     .then((reviews) => {
-        if (reviews.rows.length === 0) {
-            return Promise.reject({status: 404, msg: 'category not found'})
-        }
         return reviews.rows
+    })
     })
 }
 

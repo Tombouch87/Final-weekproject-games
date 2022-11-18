@@ -1,4 +1,4 @@
-const { selectReviewComments, addComment } = require('../models/comments.js')
+const { selectReviewComments, addComment, removeComment } = require('../models/comments.js')
 
 //6 GET api/reviews/:review_id/comments
 exports.getReviewComments = (req, res, next) => {
@@ -21,4 +21,13 @@ exports.postComment = (req, res, next) => {
         })
 }
 
-//8
+//12 DELETE ApI/comments/:comment_id
+exports.deleteComment = (req, res, next) => {
+    removeComment(req.params.comment_id)
+        .then((comment) => {
+            res.status(204).end()
+        })
+        .catch((err) => {
+            next(err)
+        })
+}
