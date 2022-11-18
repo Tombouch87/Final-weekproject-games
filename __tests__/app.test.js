@@ -414,6 +414,15 @@ describe('GET /api/reviews/?category=<category>', () => {
                 })
             })
     })
+    test('status:200, responds with empty array if category exist but no reviews', () => {
+        return request(app)
+            .get(`/api/reviews?category=children's games`)
+            .expect(200)
+            .then(({body}) => {
+                const { reviews } = body
+                expect(reviews).toEqual([])
+            })
+    })
     test('status:404, responds with error', () => {
         return request(app)
             .get('/api/reviews?category=notACategory')
@@ -473,6 +482,31 @@ describe('GET /api/reviews/?category=<category>', () => {
             .expect(400)
             .then(({body}) => {
                 expect(body.msg).toBe('invalid sort query')
+            })
+    })
+})
+
+//12 DELETE api/comments/:comment_id
+describe('DELETE api/comments/:comment_id', () => {
+    test('status:204, no response', () => {
+        return request(app)
+            .delete('/api/comments/1')
+            .expect(204)
+    })
+    test('status:404, valid but non-existent comment_id', () => {
+        return request(app)
+            .delete('/api/comments/1000')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('comment not found')
+            })
+    })
+    test('status:400, non_valid comment_id', () => {
+        return request(app)
+            .delete('/api/comments/notNumber')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('bad request, must be a number')
             })
     })
 })

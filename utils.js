@@ -13,3 +13,17 @@ exports.checkReviewExists = (review_id) => {
         }
     })
 }
+
+exports.checkCategoryExists = (category) => {
+    return db.query(
+        `
+        SELECT * FROM categories
+        WHERE slug = $1
+        `, [category]
+    )
+    .then((result) => {
+        if (result.rows.length === 0 && category) {
+            return Promise.reject({status: 404, msg: 'category not found'})
+        }
+    })
+}

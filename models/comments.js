@@ -1,5 +1,5 @@
 const db = require('../db/connection.js')
-const { checkReviewExists } = require('../utils.js')
+const { checkReviewExists} = require('../utils.js')
 
 //6 GET api/reviews/:review_id/comments
 exports.selectReviewComments = (id) => {
@@ -42,4 +42,17 @@ exports.addComment = (comment, review_id) =>   {
             })
 }
 
-//8
+///12 DELETE api/comments/:comment_id
+exports.removeComment = (comment_id) => {
+    return db.query(
+        `
+        DELETE FROM comments
+        WHERE comment_id=$1
+        ;`,[comment_id]
+    )
+    .then((response) => {
+        if (response.rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'comment not found'})
+        }
+    })
+}
