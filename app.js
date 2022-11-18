@@ -3,7 +3,7 @@ const { getCategories } = require('./controllers/categories.js')
 const { getReviews, getReviewById, patchReview } = require('./controllers/reviews.js')
 const { getReviewComments, postComment, deleteComment } = require('./controllers/comments.js')
 const { getUsers } = require('./controllers/users.js')
-const { getApi } = require('./controllers/api.js')
+const { getApi, seedDb } = require('./controllers/api.js')
 
 const app = express()
 
@@ -11,6 +11,8 @@ app.use(express.json())
 
 //13 GET api
 app.get('/api', getApi)
+
+app.get('/api/seed', seedDb)
 
 //3 GET api/categories
 app.get('/api/categories', getCategories)

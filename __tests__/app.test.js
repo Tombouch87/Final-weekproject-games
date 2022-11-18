@@ -12,7 +12,7 @@ afterAll(() => {
 
 //3 GET api/nonsense
 describe('3 GET /api/noosense', () => {
-    test('status:404, responds with an array of category objects', () => {
+    test('status:404, responds with message not found', () => {
         return request(app)
             .get('/api/nonsense')
             .expect(404)
@@ -536,3 +536,14 @@ describe('GET api', () => {
             })
     })
 })
+
+// describe('GET api/seed', () => {
+//     test('status:200, returns seeded message', () => {
+//         return request(app)
+//             .get('/api/seed')
+//             .expect(200)
+//             .then(({body}) => {
+//                 expect(body.msg).toBe('Successfully seeded')
+//             })
+//     })
+// })
