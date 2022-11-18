@@ -510,3 +510,29 @@ describe('DELETE api/comments/:comment_id', () => {
             })
     })
 })
+
+//13 GET api
+describe('GET api', () => {
+    test('status:200, returns json of endpoints', () => {
+        return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({body}) => {
+                const {endpoints} = body
+                Object.keys(endpoints).forEach((key) => {
+                    if (key === 'GET /api') {
+                        expect(endpoints[key]).toMatchObject({
+                            description: "serves up a json representation of all the available endpoints of the api"
+                        })
+                    }
+                    else {
+                        expect(endpoints[key]).toMatchObject({
+                            description: expect.any(String),
+                            queries: expect.any(Array),
+                            exampleResponse: expect.any(Object)
+                        })
+                    }
+                })
+            })
+    })
+})

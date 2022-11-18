@@ -79,6 +79,7 @@ exports.updateReview = (id, inc) => {
         if (!review.rows[0]){
             return Promise.reject({status: 404, msg: 'review not found'}) 
         }
+        console.log(review.rows[0])
         return review.rows[0]
     })
 }
