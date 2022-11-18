@@ -38,7 +38,7 @@ exports.addComment = (comment, review_id) =>   {
             )
                 })
             .then((response) => {
-                 return response.rows[0]
+                return response.rows[0]
             })
 }
 

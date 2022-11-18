@@ -3,10 +3,15 @@ const { getCategories } = require('./controllers/categories.js')
 const { getReviews, getReviewById, patchReview } = require('./controllers/reviews.js')
 const { getReviewComments, postComment, deleteComment } = require('./controllers/comments.js')
 const { getUsers } = require('./controllers/users.js')
+const { getApi } = require('./controllers/api.js')
 
 const app = express()
 
 app.use(express.json())
+
+//13 GET api
+app.get('/api', getApi)
+
 //3 GET api/categories
 app.get('/api/categories', getCategories)
 
@@ -30,6 +35,7 @@ app.get('/api/users', getUsers)
 
 //12 DELETE api/comments/:comment_id
 app.delete('/api/comments/:comment_id', deleteComment)
+
 
 app.all('/*', (req, res) => {
     res.status(404).send({msg: 'Route not found'})
